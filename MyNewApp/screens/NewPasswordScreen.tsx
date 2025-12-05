@@ -1,0 +1,208 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  Image,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Platform,
+  ScrollView,
+  Alert,
+} from 'react-native';
+import React, { useState } from 'react';
+import userStore from '../store/userStore.ts';
+
+const NewPasswordScreen = ({route ,navigation }) => {
+    const {code} = route.params
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const { loading, newPassword} = userStore();
+
+
+  const handleSend = () => {
+    if (!password || !confirmPassword) {
+      Alert.alert('Error', 'Please enter password');
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'ConfirmPassword not match');
+      return;
+    }
+   
+
+    newPassword(password,code,navigation);
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+        }}
+      >
+        <Image
+          style={styles.image}
+          source={require('../assets/logo.png')}
+          resizeMode="contain"
+        />
+        <Text style={{ marginTop: 10, fontSize: 16, color: '#555' }}>
+          Loading...
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardAvoidingView}
+        >
+          <View style={styles.header}>
+            <Image
+              style={styles.image}
+              source={require('../assets/logo.png')}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>New Password</Text>
+            <Text style={styles.subtitle}>Enter new password</Text>
+          </View>
+
+          <View style={styles.formContainer}>
+           <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Password</Text>
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Enter your password"
+                          placeholderTextColor="#999"
+                          value={password}
+                          onChangeText={setPassword}
+                          secureTextEntry
+                          autoCapitalize="none"
+                        />
+                      </View>
+          
+                      <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Confirm Password</Text>
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Confirm your password"
+                          placeholderTextColor="#999"
+                          value={confirmPassword}
+                          onChangeText={setConfirmPassword}
+                          secureTextEntry
+                          autoCapitalize="none"
+                        />
+                      </View>
+
+
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={handleSend}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? 'Sending...' : 'Send'}
+              </Text>
+            </TouchableOpacity>
+
+      
+          </View>
+
+         
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default NewPasswordScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    marginTop:40
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  image: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+  },
+  formContainer: {
+    paddingHorizontal: 30,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 8,
+    fontWeight: '500',
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 15,
+    fontSize: 16,
+    color: '#333',
+  },
+  loginButton: {
+    backgroundColor: '#041E42',
+    borderRadius: 8,
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 30,
+  },
+  footerText: {
+    color: '#666',
+    fontSize: 14,
+  },
+
+});
